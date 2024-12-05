@@ -1,6 +1,5 @@
 package com.example.Capstone.Project2.controllers;
 
-import com.example.Capstone.Project2.exceptions.UserAlreadyExistsException;
 import com.example.Capstone.Project2.exceptions.UserNotFoundException;
 import com.example.Capstone.Project2.models.UserModel;
 import com.example.Capstone.Project2.repositories.UserRepository;
@@ -16,6 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
@@ -31,10 +31,17 @@ public class UserController {
         return map;
     }
 
-    @PostMapping("user/signup")
+    @PostMapping("signup")
     public ResponseEntity<Object> signUpUser(@RequestBody UserModel userModel) {
-        if (userRepository.findByPhoneNumber(userModel.getPhoneNumber()) != null || userRepository.findByUsername(userModel.getUsername()) != null) {
-            throw new UserAlreadyExistsException();
+        if (userRepository.findByPhoneNumber(userModel.getPhoneNumber()) != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ApiResponse("User with phone number already exists", false, null));
+        } else if (userRepository.findByUsername(userModel.getUsername()) != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ApiResponse("User with username already exists", false, null));
+        } else if (!userModel.getPhoneNumber().matches("\\d{10}")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse("Phone number must be 10 digits long and contain only digits.", false, null));
         } else {
             UserModel savedUser = userRepository.save(userModel);
             Map<String, Object> sanitizedUser = sanitizeUser(savedUser);
@@ -43,7 +50,21 @@ public class UserController {
         }
     }
 
-    @GetMapping("user/{username}")
+    @PostMapping("login")
+    public ResponseEntity<Object> loginUser(@RequestBody UserModel userModel) {
+        UserModel user = userRepository.findByUsername(userModel.getUsername());
+        if (user == null) {
+            throw new UserNotFoundException();
+        } else {
+            if (!user.getPassword().equals(userModel.getPassword())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("Invalid password", false, null));
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Login successful", true, null));
+        }
+    }
+
+
+    @GetMapping("{username}")
     public ResponseEntity<Object> getUserById(@PathVariable("username") String username) {
         UserModel foundUser = userRepository.findByUsername(username);
         if (foundUser != null) {
@@ -66,7 +87,7 @@ public class UserController {
 
     }
 
-    @PutMapping("user/update/{username}")
+    @PutMapping("update/{username}")
     public ResponseEntity<Object> updateUser(@PathVariable("username") String username, @RequestBody UserModel updatedUser) {
         int result = userRepository.updateUser(username, updatedUser.getFirstName(), updatedUser.getLastName(), updatedUser.getPassword());
         if (result == 1) {
@@ -78,7 +99,7 @@ public class UserController {
     }
 
 
-    @DeleteMapping("user/delete/{username}")
+    @DeleteMapping("delete/{username}")
     public ResponseEntity<Object> deleteUserByUsername(@PathVariable("username") String username) {
         UserModel user = userRepository.findByUsername(username);
         if (user != null) {

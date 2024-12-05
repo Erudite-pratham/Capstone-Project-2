@@ -23,10 +23,4 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ApiResponse response = new ApiResponse("User not found", false, null);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
-
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<Object> handleUserAlreadyExistsException(UserAlreadyExistsException ex, WebRequest request) {
-        ApiResponse response = new ApiResponse("User already exists", false, null);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-    }
 }

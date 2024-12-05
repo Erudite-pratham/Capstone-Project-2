@@ -2,11 +2,9 @@ package com.example.Capstone.Project2.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 
 @Entity(name = "users")
 @Getter
-@Setter
 public class UserModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +24,7 @@ public class UserModel {
     @Column(nullable = false)
     private String password;
 
-    private void setId(int id) {
-        this.id = id;
+    private void setUsername(String username) {
+        this.username = username.toLowerCase();
     }
 }

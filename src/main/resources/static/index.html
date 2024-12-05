@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Sign up</title>
+    <link href="./css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<div id="card">
+    <form action="submit" id="signup-form" method="post">
+        <h1>Sign Up</h1>
+
+        <input
+                id="username"
+                name="username"
+                placeholder="Username"
+                required
+                type="text"
+        />
+
+        <input
+                id="firstName"
+                name="firstName"
+                placeholder="First Name"
+                required
+                type="text"
+        />
+
+        <input
+                id="lastName"
+                name="lastName"
+                placeholder="Last Name"
+                type="text"
+        />
+
+        <input
+                id="phoneNumber"
+                name="phoneNumber"
+                placeholder="Phone Number"
+                required
+                type="tel"
+        />
+
+        <input
+                id="password"
+                name="password"
+                placeholder="Password"
+                required
+                type="password"
+        />
+
+        <div class="btn-continer">
+            <button type="submit">Sign Up</button>
+            <button type="reset">Reset</button>
+        </div>
+    </form>
+</div>
+
+<script src="./pages/script.js"></script>
+</body>
+</html>
